@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\ArticleController;
+use App\Http\Controllers\API\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +16,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('/', function () {
+    return 'Article API';
+});
+Route::group(['prefix' => 'v1', 'namespace' => 'API'], function () {
+    // category
+    Route::get('/category', [CategoryController::class, 'index']);
+    Route::post('/category', [CategoryController::class, 'store']);
+    Route::put('/category/{id}/edit', [CategoryController::class, 'update']);
+    Route::get('/category/{slug}', [CategoryController::class, 'show']);
+    Route::delete('/category/{slug}', [CategoryController::class, 'destroy']);
+
+    // article
+    Route::get('/article', [ArticleController::class, 'index']);
+    Route::post('/article', [ArticleController::class, 'store']);
+    Route::put('/article/{slug}/edit', [ArticleController::class, 'update']);
+    Route::get('/article/{slug}', [ArticleController::class, 'show']);
+    Route::delete('/article/{slug}', [ArticleController::class, 'destroy']);
 });
