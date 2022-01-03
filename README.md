@@ -3,8 +3,7 @@
 ## Tech stacks
 
 - laravel 8
-- mariadb 10
-- redis
+- mariadb 
 - php7.3 | 8
 
 ## Installasi
