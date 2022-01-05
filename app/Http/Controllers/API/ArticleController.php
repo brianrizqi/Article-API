@@ -8,7 +8,10 @@ use App\Http\Requests\ArticleUpdateRequest;
 use App\Http\Resources\ArticleIndexResource;
 use App\Http\Resources\ArticleShowResource;
 use App\Models\Article;
+use App\Models\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ArticleController extends Controller
 {
@@ -47,14 +50,37 @@ class ArticleController extends Controller
         $description = getAttribute($request, 'description');
         $category_id = getAttribute($request, 'category_id');
         $slug = generate_slug($title, 'article');
-        Article::create([
-            'category_id' => $category_id,
-            'title' => $title,
-            'slug' => $slug,
-            'description' => $description,
-            'content' => $content
-        ]);
-        return json_response(1, 'Article Created Successfully');
+        $tags = getAttribute($request, 'tags');
+        try {
+            DB::beginTransaction();
+
+            $article = Article::create([
+                'category_id' => $category_id,
+                'title' => $title,
+                'slug' => $slug,
+                'description' => $description,
+                'content' => $content
+            ]);
+            $arr = [];
+            foreach ($tags as $i => $tag) {
+
+                $tag = Tag::firstOrCreate([
+                    'slug' => Str::slug($tag)
+                ], [
+                    'name' => $tag,
+                    'slug' => Str::slug($tag)
+                ]);
+                $arr[$i] = $tag->id;
+            }
+            $article->tags()->sync($arr);
+
+            DB::commit();
+
+            return json_response(1, 'Article Created Successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return json_response(0, $e->getMessage());
+        }
     }
 
     /**

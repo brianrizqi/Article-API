@@ -29,6 +29,7 @@ class ArticleStoreRequest extends FormRequest
             'data.attributes.title' => ['required', 'max:100'],
             'data.attributes.description' => ['required', 'max:200'],
             'data.attributes.content' => ['required'],
+            'data.attributes.tags' => ['required', 'array']
         ];
     }
 }

@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Article extends Model
 {
     use SoftDeletes;
+
     /**
      * The "type" of the auto-incrementing ID.
      *
@@ -38,5 +39,10 @@ class Article extends Model
     public function category()
     {
         return $this->belongsTo('App\Models\Category');
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany('App\Models\Tag', 'article_tags', 'article_id', 'tag_id');
     }
 }
